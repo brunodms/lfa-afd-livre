@@ -12,23 +12,23 @@ def process_input_file(file_path):
     alfabeto = []
     gramatica = []
 
-    idx = 0
-    while idx < len(entrada_lista):
-        token_lido = entrada_lista[idx]
-        idx += 1
-        if not token_lido:
+    index = 0
+    while index < len(entrada_lista):
+        token_lido = entrada_lista[index]
+        index += 1
+        if token_lido == '':
             break
         gerarAfndToken(afd, token_lido, alfabeto)
 
-    while idx < len(entrada_lista):
-        regra_gramatica_lida = entrada_lista[idx]
-        idx += 1
-        if not regra_gramatica_lida:
+    while index < len(entrada_lista):
+        regra_gramatica_lida = entrada_lista[index]
+        index += 1
+        if regra_gramatica_lida:
+            gramatica.append(regra_gramatica_lida)
+        else:
             if gramatica:
                 gerarAfndGramatica(afd, gramatica, alfabeto)
                 gramatica.clear()
-        else:
-            gramatica.append(regra_gramatica_lida)
 
     if gramatica:
         gerarAfndGramatica(afd, gramatica, alfabeto)
