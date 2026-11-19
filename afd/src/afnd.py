@@ -42,28 +42,21 @@ def gerarAfndGramatica(afnd, gramatica, alfabeto):
             rule_index = mapaRegras[symbols[0]]
         else:
             rule_index = len(afndTemporario)
-            afndTemporario[rule_index] = {}
-            mapaRegras[symbols[0]] = rule_index
+            afndTemporario[rule_index] = {} # cria o estado
+            mapaRegras[symbols[0]] = rule_index # registra o estado no mapa
         
         for symbol in symbols[1:]:
-            terminal = find(r'^\w+', symbol)
-            non_terminal = find(r'<\w+>', symbol)
-            terminal = '&' if not terminal else terminal[0]
+            terminal = find(r'^\w+', symbol) # pega a letra fora dos <>
+            non_terminal = find(r'<\w+>', symbol) # pega a letra dentro dos <>
+            if terminal == []:    
+                terminal = '&'
+            else: 
+                terminal = terminal[0]
 
             if terminal != '&' and terminal not in alfabeto:
                 alfabeto.append(terminal)
             
-            if not non_terminal:
-                # Produção sem não-terminal à direita transita direto para um novo estado final
-                state = afndTemporario[rule_index]
-
-                if terminal in state:
-                    state[terminal].append(len(afndTemporario))
-                else:
-                    state.update({terminal: [len(afndTemporario)]})
-                
-                afndTemporario[len(afndTemporario)] = {'*': [1]}
-            else:
+            if non_terminal:
                 non_terminal = non_terminal[0]
 
                 if non_terminal in mapaRegras:
@@ -79,5 +72,14 @@ def gerarAfndGramatica(afnd, gramatica, alfabeto):
                     pointer[terminal].append(state)
                 else:
                     pointer.update({terminal: [state]})
+            else:
+                state = afndTemporario[rule_index] # cria um estado final novo
+
+                if terminal in state:
+                    state[terminal].append(len(afndTemporario))
+                else:
+                    state.update({terminal: [len(afndTemporario)]})
+                
+                afndTemporario[len(afndTemporario)] = {'*': [1]}
 
     merge_automatons(afnd, afndTemporario)

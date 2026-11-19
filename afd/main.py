@@ -25,12 +25,12 @@ def process_input_file(file_path):
         index += 1
         if regra_gramatica_lida:
             gramatica.append(regra_gramatica_lida)
-        else:
+        else: # caso tenha quebra de linha dps das gramaticas
             if gramatica:
                 gerarAfndGramatica(afd, gramatica, alfabeto)
                 gramatica.clear()
 
-    if gramatica:
+    if gramatica: # caso não tenha vai igual, se tiver ta limpa então n gera nada
         gerarAfndGramatica(afd, gramatica, alfabeto)
         gramatica.clear()
 
