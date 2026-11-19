@@ -33,7 +33,7 @@ def eliminarEpsilonTransicoes(afnd):
 
 
 def determinizar(afnd):
-    mpRgs = {}
+    mapaRegs = {}
     visitados = set()
 
     def determiniza(regra, nReg):
@@ -45,15 +45,15 @@ def determinizar(afnd):
         for chave in chaves:
             if len(regra[chave]) > 1: # se a mesma letra vai pra mais de um estado
                 regra[chave].sort()
-                nRg = str(regra[chave]) # vira texto (ex: '[1, 8]') pra salvar no mapa mpRgs
+                nRg = str(regra[chave]) # vira texto (ex: '[1, 8]') pra salvar no mapaRegs
                 
-                if nRg not in mpRgs.keys(): 
-                    nEst = len(afnd) # número do estado novo que vai juntar eles
-                    mpRgs.update({nRg: nEst})
+                if nRg not in mapaRegs.keys(): 
+                    numEst = len(afnd) # número do estado novo que vai juntar eles
+                    mapaRegs.update({nRg: numEst})
                     afnd.update({len(afnd): merge_states(afnd, regra[chave])}) # cria o estado novo juntando as transições
-                    determiniza(afnd[nEst], nEst)
+                    determiniza(afnd[numEst], numEst)
                 
-                regra.update({chave: [mpRgs[nRg]]}) # troca a lista repetida pelo estado único novo
+                regra.update({chave: [mapaRegs[nRg]]}) # troca a lista repetida pelo estado único novo
 
     i, t = 0, len(afnd)
     while i < t:
