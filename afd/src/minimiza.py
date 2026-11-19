@@ -67,11 +67,12 @@ def eliminarInuteis(afnd):
         for key in keys_to_delete:
             del afnd[rule_index][key]
 
-def adicionarEstadoErro(afnd, alfabeto):
-    estado_erro = (max(afnd.keys()) + 1) if afnd else 0
-    afnd[estado_erro] = {'*': [1]}
+
+def adicionarEstadoErro(afnd, alfabeto): # Aqui adiciona o estado de erro 
+    ESTADO_ERRO = 'ER' 
+    afnd[ESTADO_ERRO] = {'*':[1]}
 
     for estado in afnd.keys():
         for simbolo in alfabeto:
             if simbolo not in afnd[estado] or not afnd[estado][simbolo]:
-                afnd[estado][simbolo] = [estado_erro]
+                afnd[estado][simbolo] = [ESTADO_ERRO]
