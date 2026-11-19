@@ -22,7 +22,7 @@ def gerarAfndToken(afnd, token, alfabeto):
         else:
             afnd[len(afnd)] = {tk: [len(afnd) + 1]} # cria o estado atual apontando pro próximo
             
-    afnd[len(afnd)] = {'*': [1]} # cria o estado final da palavra
+    afnd[len(afnd)] = {'*': [1]} # cria o estado final
 
 
 def gerarAfndGramatica(afnd, gramatica, alfabeto):
