@@ -2,7 +2,7 @@ from pathlib import Path
 from src.afnd import *
 from src.minimiza import *
 from src.determiniza import *
-from src.helpers import *
+from src.utils import *
 
 def process_input_file(file_path):
     with open(file_path, "r", encoding="utf-8") as entrada:

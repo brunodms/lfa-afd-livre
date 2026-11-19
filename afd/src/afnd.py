@@ -1,5 +1,5 @@
 from re import findall as find
-from .helpers import *
+from .utils import *
 
 def gerarAfndToken(afnd, token, alfabeto):
     if not afnd:
