@@ -3,40 +3,41 @@ from .helpers import *
 
 def gerarAfndToken(afnd, token, alfabeto):
     if not afnd:
-        afnd[0] = {}  # Cria o estado inicial do AFND caso não exista
+        afnd[0] = {}
 
-    tokenInicial = True  # Flag para identificar o primeiro caractere
+    tokenInicial = True
     
     for tk in token:
         if tk not in alfabeto:
-            alfabeto.append(tk)  # Adiciona o caractere do token ao alfabeto caso não esteja presente
+            alfabeto.append(tk)
             
         if tokenInicial:
-            state = afnd[0]  # Ponteiro para o estado inicial
+            state = afnd[0]
 
             if tk in state.keys():
-                state[tk].append(len(afnd))  # Adiciona uma transição para um novo estado caso a regra já exista
+                state[tk].append(len(afnd))
             else:
                 state.update({tk: [len(afnd)]})
             tokenInicial = False
         else:
-            afnd[len(afnd)] = {tk: [len(afnd) + 1]}  # Cria um novo estado para transitar para o próximo caractere
+            # Aponta para o próximo índice sequencial (criado na iteração seguinte ou como estado final)
+            afnd[len(afnd)] = {tk: [len(afnd) + 1]}
             
-    afnd[len(afnd)] = {'*': [1]}  # Estado final ao chegar ao fim do token
+    afnd[len(afnd)] = {'*': [1]}  # '*' identifica estado final
 
 
 def gerarAfndGramatica(afnd, gramatica, alfabeto):
     if not afnd:
-        afnd[0] = {}  # Cria o estado inicial do AFND caso não exista
+        afnd[0] = {}
     
     afndTemporario = {}
     mapaRegras = {}
     
     for regra in gramatica:
         regra_normalizada = regra.replace('ε', '&').replace('ɛ', '&')
-        symbols = find(r'(\w*<\w+>|\w+|&)', regra_normalizada)  # Separa a regra e suas produções
+        # symbols[0] é o não-terminal da cabeça da regra; symbols[1:] são as produções
+        symbols = find(r'(\w*<\w+>|\w+|&)', regra_normalizada)
         
-        # Identifica ou cria uma regra no autômato temporário
         if symbols[0] in mapaRegras:
             rule_index = mapaRegras[symbols[0]]
         else:
@@ -53,6 +54,7 @@ def gerarAfndGramatica(afnd, gramatica, alfabeto):
                 alfabeto.append(terminal)
             
             if not non_terminal:
+                # Produção sem não-terminal à direita transita direto para um novo estado final
                 state = afndTemporario[rule_index]
 
                 if terminal in state:

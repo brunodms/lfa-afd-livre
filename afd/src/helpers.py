@@ -19,6 +19,7 @@ def merge_lists(list1, list2):
 
 
 def merge_automatons(afd, afnd_temp):
+    # Desloca os IDs da gramática para não colidirem com os estados já existentes e liga via épsilon (&) a partir do estado 0
     new_state_mapping = {x: x + len(afd) for x in range(len(afnd_temp))}
     
     if '&' in afd[0].keys():
