@@ -13,10 +13,10 @@ def eliminarInalcancaveis(afnd):
             if key == '*':
                 continue
             for i in rule[key]:
-                eliminar_alcancaveis(afnd[i], i)
+                eliminar_alcancaveis(afnd[i], i) # segue o caminho de cada transição a partir do estado 0
 
     eliminar_alcancaveis(afnd[0], 0)
-    unreachable_states = set(afnd.keys()) - visitados
+    unreachable_states = set(afnd.keys()) - visitados # pega quem nunca foi visitado
     for state in unreachable_states:
         del afnd[state]
 
@@ -26,7 +26,7 @@ def eliminarInuteis(afnd):
     
     for rule in afnd:
         if '*' in afnd[rule].keys():
-            useful.add(rule)
+            useful.add(rule) # todo estado final já é útil
     
     def find_useful(rule, rule_index):
         if rule_index in useful:
@@ -39,7 +39,7 @@ def eliminarInuteis(afnd):
                 continue
             for r in rule[key]:
                 if r not in visited:
-                    if find_useful(afnd[r], r):
+                    if find_useful(afnd[r], r): # testa se seguindo esse caminho dá pra chegar num estado final
                         return True
         return False
 
@@ -50,7 +50,7 @@ def eliminarInuteis(afnd):
             useful.add(rule_index)
         visited = set()
     
-    unused_states = set(all_rules) - useful
+    unused_states = set(all_rules) - useful # estados mortos (não chegam em nenhum final)
     for state in unused_states:
         del afnd[state]
     
@@ -60,7 +60,7 @@ def eliminarInuteis(afnd):
             if key == '*':
                 continue
             
-            afnd[rule_index][key] = [r for r in afnd[rule_index][key] if r in useful]
+            afnd[rule_index][key] = [r for r in afnd[rule_index][key] if r in useful] # limpa transições que iam pra estado morto
             if not afnd[rule_index][key]:
                 keys_to_delete.append(key)
         

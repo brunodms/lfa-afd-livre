@@ -15,15 +15,14 @@ def gerarAfndToken(afnd, token, alfabeto):
             state = afnd[0]
 
             if tk in state.keys():
-                state[tk].append(len(afnd))
+                state[tk].append(len(afnd)) # se já tem a letra no estado 0, adiciona mais um destino na lista
             else:
-                state.update({tk: [len(afnd)]})
+                state.update({tk: [len(afnd)]}) # se não tem, cria a transição pro próximo estado
             tokenInicial = False
         else:
-            # Aponta para o próximo índice sequencial (criado na iteração seguinte ou como estado final)
-            afnd[len(afnd)] = {tk: [len(afnd) + 1]}
+            afnd[len(afnd)] = {tk: [len(afnd) + 1]} # cria o estado atual apontando pro próximo
             
-    afnd[len(afnd)] = {'*': [1]}  # '*' identifica estado final
+    afnd[len(afnd)] = {'*': [1]} # cria o estado final da palavra
 
 
 def gerarAfndGramatica(afnd, gramatica, alfabeto):
@@ -35,8 +34,7 @@ def gerarAfndGramatica(afnd, gramatica, alfabeto):
     
     for regra in gramatica:
         regra_normalizada = regra.replace('ε', '&').replace('ɛ', '&')
-        # symbols[0] é o não-terminal da cabeça da regra; symbols[1:] são as produções
-        symbols = find(r'(\w*<\w+>|\w+|&)', regra_normalizada)
+        symbols = find(r'(\w*<\w+>|\w+|&)', regra_normalizada) # separa a regra (symbols[0]) das produções (symbols[1:])
         
         if symbols[0] in mapaRegras:
             rule_index = mapaRegras[symbols[0]]
@@ -46,8 +44,8 @@ def gerarAfndGramatica(afnd, gramatica, alfabeto):
             mapaRegras[symbols[0]] = rule_index # registra o estado no mapa
         
         for symbol in symbols[1:]:
-            terminal = find(r'^\w+', symbol) # pega a letra fora dos <>
-            non_terminal = find(r'<\w+>', symbol) # pega a letra dentro dos <>
+            terminal = find(r'^\w+', symbol)
+            non_terminal = find(r'<\w+>', symbol)
             if terminal == []:    
                 terminal = '&'
             else: 
@@ -60,26 +58,26 @@ def gerarAfndGramatica(afnd, gramatica, alfabeto):
                 non_terminal = non_terminal[0]
 
                 if non_terminal in mapaRegras:
-                    state = mapaRegras[non_terminal]
+                    state = mapaRegras[non_terminal] # pega o número do estado destino
                 else:
                     state = len(afndTemporario)
-                    mapaRegras[non_terminal] = state
+                    mapaRegras[non_terminal] = state # registra o estado destino no mapa
                     afndTemporario[state] = {}
 
                 pointer = afndTemporario[rule_index]
 
                 if terminal in pointer:
-                    pointer[terminal].append(state)
+                    pointer[terminal].append(state) 
                 else:
-                    pointer.update({terminal: [state]})
+                    pointer.update({terminal: [state]}) # aponta pro estado do não-terminal
             else:
-                state = afndTemporario[rule_index] # cria um estado final novo
+                state = afndTemporario[rule_index]
 
                 if terminal in state:
-                    state[terminal].append(len(afndTemporario))
+                    state[terminal].append(len(afndTemporario)) 
                 else:
-                    state.update({terminal: [len(afndTemporario)]})
+                    state.update({terminal: [len(afndTemporario)]}) # aponta pro novo estado final criado abaixo
                 
-                afndTemporario[len(afndTemporario)] = {'*': [1]}
+                afndTemporario[len(afndTemporario)] = {'*': [1]} # cria um estado final novo
 
     merge_automatons(afnd, afndTemporario)

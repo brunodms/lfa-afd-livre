@@ -4,38 +4,37 @@ def merge_states(automaton, states):
     def merge(state):
         for s in state:
             if s in final_state:
-                final_state[s] = merge_lists(final_state[s], state[s])
+                final_state[s] = merge_lists(final_state[s], state[s]) # se já tem a letra, junta os destinos
             else:
-                final_state.update({s: state[s].copy()})
+                final_state.update({s: state[s].copy()}) # se não tem, copia a transição
 
     for state in states:
-        merge(automaton[state])
+        merge(automaton[state]) # junta todas as transições dos estados passados na lista
     
     return final_state
 
 
 def merge_lists(list1, list2):
-    return list1 + list(set(list2) - set(list1))
+    return list1 + list(set(list2) - set(list1)) # junta duas listas sem repetir
 
 
 def merge_automatons(afd, afnd_temp):
-    # Desloca os IDs da gramática para não colidirem com os estados já existentes e liga via épsilon (&) a partir do estado 0
-    new_state_mapping = {x: x + len(afd) for x in range(len(afnd_temp))}
+    new_state_mapping = {x: x + len(afd) for x in range(len(afnd_temp))} # soma o tamanho do afd pra não bater com os estados que já existem
     
     if '&' in afd[0].keys():
         afd[0]['&'].append(new_state_mapping[0])
     else:
-        afd[0].update({'&': [new_state_mapping[0]]})
+        afd[0].update({'&': [new_state_mapping[0]]}) # liga o estado 0 no começo da gramática com '&'
     
     for key in afnd_temp.keys():
         for ch in afnd_temp[key].keys():
             if ch == '*':
                 continue
-            new_states = [new_state_mapping[i] for i in afnd_temp[key][ch]]
+            new_states = [new_state_mapping[i] for i in afnd_temp[key][ch]] # atualiza os destinos pros números novos
             afnd_temp[key][ch] = new_states
     
     for key in afnd_temp.keys():
-        afd.update({new_state_mapping[key]: afnd_temp[key]})
+        afd.update({new_state_mapping[key]: afnd_temp[key]}) # joga os estados da gramática dentro do afd principal
 
 
 def display_deterministic_automaton(afnd, alphabet):
